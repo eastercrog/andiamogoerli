@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Simple DApp</title>
+</head>
+<body>
+    <h1>goerli locker</h1>
+    <div>
+        <label>Token Address:</label>
+        <input id="tokenAddress" type="text" />
+    </div>
+    <div>
+        <label>Withdrawer:</label>
+        <input id="withdrawer" type="text" />
+    </div>
+    <div>
+        <label>Amount of Token:</label>
+        <input id="amount" type="number" />
+    </div>
+    <div>
+        <label>Unlock Timestamp:</label>
+        <input id="unlockTimestamp" type="number" />
+    </div>
+    <button onclick="connectWithMetamask()">Connect with Metamask</button>
+    <button onclick="toggleApproval()">Approve/Lock Tokens</button>
+
+    <script src="https://cdn.jsdelivr.net/npm/web3@1.5.3/dist/web3.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
