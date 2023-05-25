@@ -29,28 +29,59 @@ async function connectWithMetamask() {
   }
 }
 
+// Approve tokens
+async function approveTokens(tokenAddress, amount, unlockTimestamp) {
+  try {
+    // Approve tokens for the contract
+    const tokenContract = new web3.eth.Contract(tokenABI, tokenAddress);
+    const approveAmount = web3.utils.toWei(amount, 'ether');
+
+    // Assuming you have connected to the user's MetaMask account
+    const accounts = await web3.eth.getAccounts();
+    const userAccount = accounts[0]; // Use the first account by default
+
+    await tokenContract.methods.approve(contractAddress, approveAmount).send({ from: userAccount });
+    console.log('Tokens approved!');
+    
+    // Lock tokens
+    await lockTokens(tokenAddress, userAccount, amount, unlockTimestamp);
+  } catch (error) {
+    console.error('Error approving tokens:', error);
+    alert('Failed to approve tokens. Please check the console for more details.');
+  }
+}
+
+// Lock tokens
+async function lockTokens(tokenAddress, withdrawer, amount, unlockTimestamp) {
+  try {
+    // Call the contract function to lock tokens
+    await contract.methods.lockTokens(tokenAddress, withdrawer, amount, unlockTimestamp).send({ from: withdrawer });
+
+    const button = document.querySelector('button');
+    if (button.innerHTML === 'Approve/Lock Tokens') {
+      button.innerHTML = 'Unlock Tokens';
+    } else {
+      button.innerHTML = 'Approve/Lock Tokens';
+    }
+
+    alert('Tokens toggled!');
+  } catch (error) {
+    console.error('Error toggling tokens:', error);
+    alert('Failed to toggle tokens. Please check the console for more details.');
+  }
+}
+
 // Toggle approval/locking of tokens
 async function toggleApproval() {
-    const tokenAddress = document.getElementById('tokenAddress').value;
-    const withdrawer = document.getElementById('withdrawer').value;
-    const amount = document.getElementById('amount').value;
-    const unlockTimestamp = document.getElementById('unlockTimestamp').value;
-  
-    try {
-      // Call the contract function to lock tokens
-      await contract.methods.lockTokens(tokenAddress, withdrawer, amount, unlockTimestamp).send({ from: withdrawer });
-  
-      const button = document.querySelector('button');
-      if (button.innerHTML === 'Approve/Lock Tokens') {
-        button.innerHTML = 'Unlock Tokens';
-      } else {
-        button.innerHTML = 'Approve/Lock Tokens';
-      }
-  
-      alert('Tokens toggled!');
-    } catch (error) {
-      console.error('Error toggling tokens:', error);
-      alert('Failed to toggle tokens. Please check the console for more details.');
-    }
+  const tokenAddress = document.getElementById('tokenAddress').value;
+  const withdrawer = document.getElementById('withdrawer').value;
+  const amount = document.getElementById('amount').value;
+  const unlockTimestamp = document.getElementById('unlockTimestamp').value;
+
+  try {
+    await approveTokens(tokenAddress, amount, unlockTimestamp);
+  } catch (error) {
+    console.error('Error toggling tokens:', error);
+    alert('Failed to toggle tokens. Please check the console for more details.');
   }
-  
+}
