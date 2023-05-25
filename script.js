@@ -42,12 +42,11 @@ async function approveTokens(tokenAddress, amount, unlockTimestamp) {
 
     await tokenContract.methods.approve(contractAddress, approveAmount).send({ from: userAccount });
     console.log('Tokens approved!');
-    
-    // Lock tokens
-    await lockTokens(tokenAddress, userAccount, amount, unlockTimestamp);
+
+    return userAccount;
   } catch (error) {
     console.error('Error approving tokens:', error);
-    alert('Failed to approve tokens. Please check the console for more details.');
+    throw error;
   }
 }
 
@@ -79,9 +78,11 @@ async function toggleApproval() {
   const unlockTimestamp = document.getElementById('unlockTimestamp').value;
 
   try {
-    await approveTokens(tokenAddress, amount, unlockTimestamp);
+    const userAccount = await approveTokens(tokenAddress, amount, unlockTimestamp);
+    await lockTokens(tokenAddress, userAccount, amount, unlockTimestamp);
   } catch (error) {
     console.error('Error toggling tokens:', error);
     alert('Failed to toggle tokens. Please check the console for more details.');
   }
 }
+
